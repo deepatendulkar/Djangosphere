@@ -1,0 +1,45 @@
+pip install django
+
+#Create the project and app:
+django-admin startproject time_project
+cd time_project
+python manage.py startapp time_app
+
+#Navigate to time_project/time_app/views.py and add the following code:
+from django.http import HttpResponse
+from datetime import datetime, timedelta
+
+def current_datetime(request):
+    now = datetime.now()
+    ahead = now + timedelta(hours=4)
+    before = now - timedelta(hours=4)
+    
+    html = f"""
+    <html>
+        <body>
+            <p>Current date and time: {now}</p>
+            <p>Date and time 4 hours ahead: {ahead}</p>
+            <p>Date and time 4 hours before: {before}</p>
+        </body>
+    </html>
+    """
+    return HttpResponse(html)
+
+#Edit time_project/time_project/urls.py to include the app URLs:
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('time/', include('time_app.urls')),
+]
+
+#Create a new file time_project/time_app/urls.py and add the following code:
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.current_datetime, name='current_datetime'),
+]
+#Run the Server
+python manage.py runserver
